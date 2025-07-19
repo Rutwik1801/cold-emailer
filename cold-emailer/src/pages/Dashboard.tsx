@@ -13,7 +13,7 @@ const myTheme = themeQuartz.withPart(colorSchemeDark);
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default function Dashboard() {
-  const [rowData, setRowData] = useState([]);
+  const [rowData, setRowData] = useState<any>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,7 +24,7 @@ export default function Dashboard() {
     fetchData();
   }, []);
 
-  const handleFollowUp = async (data) => {
+  const handleFollowUp = async (data: any) => {
     toast.info("Sending Follow Up...")
     try {
       await sendEmail(data.id, true)
@@ -42,7 +42,7 @@ export default function Dashboard() {
     {
       field: "actions",
       headerName: 'Actions',
-      cellRenderer: (params) => (
+      cellRenderer: (params: any) => (
         <button
           onClick={() => handleFollowUp(params.data)}
           className="bg-green-500 text-white px-2 py-1 rounded"

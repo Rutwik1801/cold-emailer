@@ -40,7 +40,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav style={navStyle}>
+      <nav style={navStyle as any}>
         <Link to="/" style={brandStyle}>Outreach</Link>
         <div style={linkContainerStyle}>
           <Link to="/profile" style={linkStyle}>Profile</Link>

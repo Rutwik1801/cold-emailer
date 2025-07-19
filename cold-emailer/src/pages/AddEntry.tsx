@@ -28,7 +28,7 @@ export default function AddEntry() {
         setDisableResumeAddition(urls.length > 1);
     };
 
-    const handleUploadResume = async (e) => {
+    const handleUploadResume = async (e: any) => {
         const file = e.target.files[0];
         const fileRef = ref(storage, `resumes/${auth.currentUser?.uid}/${file.name}`);
         await uploadBytes(fileRef, file);
@@ -53,8 +53,8 @@ export default function AddEntry() {
 
     return (
         <>
-            <div style={styles.container}>
-                <p style={styles.heading}>Add New Outreach</p>
+            <div style={styles.container as any}>
+                <p style={styles.heading as any}>Add New Outreach</p>
                 <div>
                     <Input label="Company" placeholder="eg OpenAI" onChange={(e) => setNewEntry({ ...newEntry, company: e })} />
                     <Input label="Recipient Name" placeholder="eg Sam Altman" onChange={(e) => setNewEntry({ ...newEntry, recipient: e })} />
