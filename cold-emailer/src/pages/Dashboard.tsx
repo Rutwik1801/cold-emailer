@@ -4,6 +4,8 @@ import { db } from '../store/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { AllCommunityModule, ModuleRegistry, themeQuartz } from "ag-grid-community";
 import { colorSchemeDark } from 'ag-grid-community';
+import { ToastContainer, toast } from 'react-toastify';
+
 import { sendEmail } from '../utils';
 
 const myTheme = themeQuartz.withPart(colorSchemeDark);
@@ -22,9 +24,14 @@ export default function Dashboard() {
     fetchData();
   }, []);
 
-  const handleFollowUp = (data) => {
-    console.log(data)
-    sendEmail(data.id, true)
+  const handleFollowUp = async (data) => {
+    toast.info("Sending Follow Up...")
+    try {
+      await sendEmail(data.id, true)
+      toast.success("Sent Successfully!")
+    } catch(e) {
+      toast.error("Error Sending The Mail")
+    }
   }
 
   const columnDefs = [
@@ -49,6 +56,7 @@ export default function Dashboard() {
   return (
     <div  style={{ height: 500, width: '100%' }}>
       <AgGridReact theme={myTheme} rowData={rowData} columnDefs={columnDefs}  />
+            <ToastContainer position="bottom-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} />
     </div>
   );
 }

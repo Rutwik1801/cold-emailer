@@ -5,6 +5,8 @@ import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage';
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { Input } from '../components/Input';
 import { sendEmail } from '../utils';
+import { toast, ToastContainer } from 'react-toastify';
+import { useNavigate } from 'react-router';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -12,6 +14,7 @@ export default function AddEntry() {
     const [newEntry, setNewEntry] = useState({});
     const [resumes, setResumes] = useState<string[]>([]);
     const [disableResumeAddition, setDisableResumeAddition] = useState(false);
+    const navigate = useNavigate()
 
     useEffect(() => {
         fetchResumes();
@@ -38,40 +41,49 @@ export default function AddEntry() {
             userId: auth.currentUser?.uid,
             timestamp: new Date().toISOString(),
         });
-
-        sendEmail(docRef.id);
+        toast.info("Sending an Email...")
+        try {
+            navigate("/")
+            await sendEmail(docRef.id);
+            toast.success("Email Successfully Sent!")
+        } catch (e) {
+            toast.error("Error Sending Email")
+        }
     };
 
     return (
-        <div style={styles.container}>
-            <p style={styles.heading}>Add New Outreach</p>
-            <div>
-                <Input label="Company" placeholder="eg OpenAI" onChange={(e) => setNewEntry({ ...newEntry, company: e })} />
-                <Input label="Recipient Name" placeholder="eg Sam Altman" onChange={(e) => setNewEntry({ ...newEntry, recipient: e })} />
-                <Input label="Recipient Email" placeholder="e.g. sam@openai.com" onChange={(e) => setNewEntry({ ...newEntry, email: e })} />
-                <Input label="Follow-up After (days)" placeholder="e.g. 2" onChange={(e) => setNewEntry({ ...newEntry, followUpAfterDays: e })} />
-                <Input
-                    isSelect={true}
-                    label="Resume"
-                    placeholder="Select resume"
-                    options={resumes.map((url, i) => (
-                        <option key={i} value={url}>{`Resume ${i + 1}`}</option>
-                    ))}
-                    onChange={(e) => setNewEntry({ ...newEntry, resumeUrl: e })}
-                />
-            </div>
-
-            {!disableResumeAddition && (
+        <>
+            <div style={styles.container}>
+                <p style={styles.heading}>Add New Outreach</p>
                 <div>
-                    <label>📄 Upload A New Resume (PDF only)</label>
-                    <input disabled={disableResumeAddition} type="file" accept="application/pdf" onChange={handleUploadResume} />
-                    <p style={styles.note}>* Note:- Maximum 2 resumes allowed per user.</p>
+                    <Input label="Company" placeholder="eg OpenAI" onChange={(e) => setNewEntry({ ...newEntry, company: e })} />
+                    <Input label="Recipient Name" placeholder="eg Sam Altman" onChange={(e) => setNewEntry({ ...newEntry, recipient: e })} />
+                    <Input label="Recipient Email" placeholder="e.g. sam@openai.com" onChange={(e) => setNewEntry({ ...newEntry, email: e })} />
+                    <Input label="Follow-up After (days)" placeholder="e.g. 2" onChange={(e) => setNewEntry({ ...newEntry, followUpAfterDays: e })} />
+                    <Input
+                        isSelect={true}
+                        label="Resume"
+                        placeholder="Select resume"
+                        options={resumes.map((url, i) => (
+                            <option key={i} value={url}>{`Resume ${i + 1}`}</option>
+                        ))}
+                        onChange={(e) => setNewEntry({ ...newEntry, resumeUrl: e })}
+                    />
                 </div>
-            )}
-            <div style={styles.buttonContainer}>
-                <button style={styles.button} onClick={handleAddEntry}>Send Email</button>
+
+                {!disableResumeAddition && (
+                    <div>
+                        <label>📄 Upload A New Resume (PDF only)</label>
+                        <input disabled={disableResumeAddition} type="file" accept="application/pdf" onChange={handleUploadResume} />
+                        <p style={styles.note}>* Note:- Maximum 2 resumes allowed per user.</p>
+                    </div>
+                )}
+                <div style={styles.buttonContainer}>
+                    <button style={styles.button} onClick={handleAddEntry}>Send Email</button>
+                </div>
             </div>
-        </div>
+            <ToastContainer position="bottom-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} />
+        </>
     );
 }
 
