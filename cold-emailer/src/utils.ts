@@ -1,6 +1,6 @@
     export const sendEmail = async (entryId: string, isFollowUp=false) => {
         try {
-            const res = await fetch("http://127.0.0.1:8000/send-email", {
+            const res = await fetch(BACKEND_URL, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -19,3 +19,6 @@
             alert("❌ Server error while sending email");
         }
     };
+
+export const BACKEND_URL = "https://cold-emailer.onrender.com/send-email"
+export const BACKEND_LOCAL_URL = "http://127.0.0.1:8000/send-email"
